@@ -32,7 +32,7 @@ export default function TicketsPage() {
 
   const [showNew, setShowNew] = useState(false)
   const [params, setParams] = useState<TicketSearchParams>({
-    page: 1, pageSize: 25, sortBy: 'created_at', sortDesc: true
+    page: 1, pageSize: 25, sortBy: 'created_at', sortDesc: true, status: 'open' as any
   })
   const [search, setSearch] = useState('')
 
@@ -101,12 +101,16 @@ export default function TicketsPage() {
         className="flex items-center gap-2 px-6 py-3 overflow-x-auto"
         style={{ borderBottom: '1px solid var(--border)', background: 'var(--surface-0)' }}
       >
-        {STATUS_FILTERS.map(f => (
+        {STATUS_FILTERS.map(f => {
+          const isActive = f.value === ''
+            ? !params.status
+            : (params.status as string)?.toLowerCase() === f.value.toLowerCase()
+          return (
           <button
             key={f.value}
             className={clsx(
               'text-xs px-3 py-1.5 rounded-full border transition-colors whitespace-nowrap',
-              params.status === f.value || (!params.status && f.value === '')
+              isActive
                 ? 'bg-blue-50 border-blue-200 text-blue-600 font-medium dark:bg-blue-900/30 dark:border-blue-700 dark:text-blue-400'
                 : 'border-transparent text-[color:var(--ink-2)] hover:bg-[var(--surface-2)]'
             )}
@@ -114,7 +118,8 @@ export default function TicketsPage() {
           >
             {f.label}
           </button>
-        ))}
+          )
+        })}
 
         <div className="w-px h-4 mx-1" style={{ background: 'var(--border)' }} />
 
